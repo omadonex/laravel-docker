@@ -1,0 +1,68 @@
+version: '2'
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: ${SUBNET}/24
+          gateway: ${GATEWAY}
+
+services:
+    db:
+        container_name: ${PROJECT}_db
+        build: src/db
+        volumes:
+            - ./data/mysql:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+        ports:
+            - "${PORT_DB}:3306"
+        restart: always
+    app:
+        container_name: ${PROJECT}_app
+        build:
+            context: src/app
+            args:
+                - VERSION_NVM=${VERSION_NVM}
+                - VERSION_NODE=${VERSION_NODE}
+        mem_limit: 1024m
+        memswap_limit: 2048m
+        mem_reservation: 512m
+        privileged: true
+        volumes:
+            - ${PROJECT_PATH}:/var/www/html
+            - ./src/app/www.conf:/usr/local/etc/php-fpm.d/www.conf
+        depends_on:
+            - db
+        extra_hosts:
+            - "hostmachine: ${GATEWAY}"
+        restart: always
+    nginx:
+        container_name: ${PROJECT}_nginx
+        build: src/nginx
+        ports:
+            - "${PORT_HTTP}:80"
+            - "${PORT_HTTPS}:443"
+        volumes_from:
+            - app
+        volumes:
+            - ./temp/nginx/logs:/var/log/nginx
+        restart: always
+    pma:
+        container_name: ${PROJECT}_pma
+        build: src/pma
+        environment:
+            - PMA_ARBITRARY=1
+            - MYSQL_USER=${DB_USERNAME}
+            - MYSQL_PASSWORD=${DB_PASSWORD}
+            - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+        ports:
+            - "${PORT_PMA}:80"
+        depends_on:
+            - db
+        restart: always
