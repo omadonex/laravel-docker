@@ -1,1 +1,35 @@
 # Developer environment based on Docker for Laravel
+
+## Usage
+
+Go to project root directory (it must be under git) and add new submodule
+
+```
+    git add submodule https://github.com/omadonex/laradock.git
+```
+
+Copy .env.example to .env you can leave its contents as is just set PROJECT value (this value will be used for naming containers)
+
+In project's .env set connection to db
+ 
+```
+DB_CONNECTION=mysql
+DB_HOST="myprojectname"_db
+DB_PORT=3306
+DB_DATABASE=dev
+DB_USERNAME=user
+DB_PASSWORD=pass
+```
+
+Add to hosts files next line (if you are using docker toolbox you must set here docker machine ip)
+```
+    127.0.0.1 dev.laravel
+```
+
+Now you can run containers (docker-compose.yml located inside new folder for submodule)
+
+```
+    docker-compose up 
+```
+
+Your website now available at http://dev.laravel
