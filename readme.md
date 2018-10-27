@@ -33,3 +33,8 @@ Now you can run containers (docker-compose.yml located inside new folder for sub
 ```
 
 Your website now available at http://dev.laravel
+
+## Contents
+Developer environment consists of several containers (nginx, mysql, app, pma)
+
+`app` container has node and composer installed (node version you can set in .env file) 
