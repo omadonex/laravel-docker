@@ -34,6 +34,8 @@ Now you can run containers (docker-compose.yml located inside new folder for sub
 
 Your website now available at http://dev.laravel
 
+PhpMyAdmin available at http://dev.laravel:8080
+
 ## Contents
 Developer environment consists of several containers (nginx, mysql, app, pma)
 
