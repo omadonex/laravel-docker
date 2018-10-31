@@ -11,7 +11,6 @@ networks:
 
 services:
     db:
-        container_name: ${PROJECT}_db
         build: src/db
         volumes:
             - ./data/mysql:/var/lib/mysql
@@ -24,10 +23,10 @@ services:
             - "${PORT_DB}:3306"
         restart: always
     app:
-        container_name: ${PROJECT}_app
         build:
             context: src/app
             args:
+                - VERSION_PHP=${VERSION_PHP}
                 - VERSION_NVM=${VERSION_NVM}
                 - VERSION_NODE=${VERSION_NODE}
         mem_limit: 1024m
@@ -43,7 +42,6 @@ services:
             - "hostmachine: ${GATEWAY}"
         restart: always
     nginx:
-        container_name: ${PROJECT}_nginx
         build: src/nginx
         ports:
             - "${PORT_HTTP}:80"
@@ -54,7 +52,6 @@ services:
             - ./temp/nginx/logs:/var/log/nginx
         restart: always
     pma:
-        container_name: ${PROJECT}_pma
         build: src/pma
         environment:
             - PMA_ARBITRARY=1
