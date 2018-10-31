@@ -1,6 +1,4 @@
 ARG VERSION_PHP
-ARG VERSION_NVM
-ARG VERSION_NODE
 
 FROM php:${VERSION_PHP}-fpm
 
@@ -23,7 +21,9 @@ COPY ./php.ini /usr/local/etc/php/conf.d/my-php.ini
 #####################################
 # Node:
 #####################################
+ARG VERSION_NVM
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v${VERSION_NVM}/install.sh | bash
+ARG VERSION_NODE
 RUN bash -l -c "nvm install ${VERSION_NODE}"
 
 #####################################
