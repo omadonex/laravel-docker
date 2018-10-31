@@ -1,7 +1,8 @@
-FROM php:7.1-fpm
-
+ARG VERSION_PHP
 ARG VERSION_NVM
 ARG VERSION_NODE
+
+FROM php:${VERSION_PHP}-fpm
 
 #####################################
 # Requirements:
