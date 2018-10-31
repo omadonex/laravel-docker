@@ -5,7 +5,7 @@
 Go to project root directory (it must be under git) and add new submodule
 
 ```
-    git add submodule https://github.com/omadonex/laradock.git
+    git submodule add https://github.com/omadonex/laradock.git
 ```
 
 Copy .env.example to .env you can leave its contents as is just set PROJECT value (this value will be used for naming containers)
