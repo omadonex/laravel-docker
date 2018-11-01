@@ -17,6 +17,8 @@ services:
             MYSQL_DATABASE: ${DB_DATABASE}
             MYSQL_USER: ${DB_USERNAME}
             MYSQL_PASSWORD: ${DB_PASSWORD}
+        networks:
+            - internal
         ports:
             - "${PORT_DB}:3306"
         restart: always
@@ -48,6 +50,8 @@ services:
             - ./src/app/www.conf:/usr/local/etc/php-fpm.d/www.conf
     nginx:
         build: src/nginx
+        networks:
+            - internal
         ports:
             - "${PORT_HTTP}:80"
             - "${PORT_HTTPS}:443"
@@ -65,6 +69,8 @@ services:
             - MYSQL_USER=${DB_USERNAME}
             - MYSQL_PASSWORD=${DB_PASSWORD}
             - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+        networks:
+            - internal
         ports:
             - "${PORT_PMA}:80"
         restart: always

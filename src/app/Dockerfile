@@ -47,8 +47,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Initialization:
 #####################################
 CMD bash -l -c "\
-    chgrp -R www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R ug+rwx /var/www/html/storage /var/www/html/bootstrap/cache \
+    chgrp -R www-data /var/www/storage /var/www/bootstrap/cache \
+    && chmod -R ug+rwx /var/www/storage /var/www/bootstrap/cache \
     && php-fpm"
 
-WORKDIR /var/www/html
+WORKDIR /var/www
