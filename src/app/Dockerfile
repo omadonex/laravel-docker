@@ -19,6 +19,20 @@ RUN docker-php-ext-install pdo pdo_mysql zip gd
 COPY ./php.ini /usr/local/etc/php/conf.d/my-php.ini
 
 #####################################
+# xDebug:
+#####################################
+ARG XDEBUG
+ARG VERSION_XDEBUG
+COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+RUN if [ ${XDEBUG} = true ]; then \
+    pecl install xdebug-${VERSION_XDEBUG} && \
+    docker-php-ext-enable xdebug \
+;fi
+ENV if [ ${XDEBUG} = true ]; then \
+    XDEBUGINI_PATH=/usr/local/etc/php/conf.d/xdebug.ini \
+;fi
+
+#####################################
 # Node:
 #####################################
 ARG VERSION_NVM

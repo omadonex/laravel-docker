@@ -26,6 +26,8 @@ services:
         build:
             context: src/app
             args:
+                - XDEBUG=${XDEBUG}
+                - VERSION_XDEBUG=${VERSION_XDEBUG}
                 - VERSION_PHP=${VERSION_PHP}
                 - VERSION_NVM=${VERSION_NVM}
                 - VERSION_NODE=${VERSION_NODE}
