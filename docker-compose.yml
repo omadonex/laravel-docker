@@ -37,7 +37,6 @@ services:
             - db
         environment:
             PHP_IDE_CONFIG: "serverName=Docker"
-            XDEBUGINI_PATH: "/usr/local/etc/php/conf.d/xdebug.ini"
         mem_limit: 1024m
         memswap_limit: 2048m
         mem_reservation: 512m
