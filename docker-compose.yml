@@ -12,7 +12,7 @@ networks:
 services:
     db:
         build: src/db
-        image: omadonex/docker_db:1.0
+        image: omadonex/laravel_db:1.0
         environment:
             MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
             MYSQL_DATABASE: ${DB_DATABASE}
@@ -38,7 +38,7 @@ services:
                 - VERSION_PHP=${VERSION_PHP}
                 - VERSION_NVM=${VERSION_NVM}
                 - VERSION_NODE=${VERSION_NODE}
-        image: omadonex/docker_app:1.0
+        image: omadonex/laravel_app:1.0
         environment:
             PHP_IDE_CONFIG: "serverName=Docker"
         depends_on:
@@ -51,7 +51,7 @@ services:
             - ./src/app/www.conf:/usr/local/etc/php-fpm.d/www.conf
     nginx:
         build: src/nginx
-        image: omadonex/docker_nginx:1.0
+        image: omadonex/laravel_nginx:1.0
         networks:
             - internal
         ports:
@@ -64,7 +64,7 @@ services:
             - ./temp/nginx/logs:/var/log/nginx
     pma:
         build: src/pma
-        image: omadonex/docker_pma:1.0
+        image: omadonex/laravel_pma:1.0
         environment:
             - PMA_ARBITRARY=1
             - MYSQL_USER=${DB_USERNAME}
