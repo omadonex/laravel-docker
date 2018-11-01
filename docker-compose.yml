@@ -12,6 +12,7 @@ networks:
 services:
     db:
         build: src/db
+        image: omadonex/docker_db:1.0
         environment:
             MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
             MYSQL_DATABASE: ${DB_DATABASE}
@@ -25,6 +26,10 @@ services:
         volumes:
             - ./data/mysql:/var/lib/mysql
     app:
+        mem_limit: 1024m
+        memswap_limit: 2048m
+        mem_reservation: 512m
+        privileged: true
         build:
             context: src/app
             args:
@@ -33,22 +38,20 @@ services:
                 - VERSION_PHP=${VERSION_PHP}
                 - VERSION_NVM=${VERSION_NVM}
                 - VERSION_NODE=${VERSION_NODE}
-        depends_on:
-            - db
+        image: omadonex/docker_app:1.0
         environment:
             PHP_IDE_CONFIG: "serverName=Docker"
-        mem_limit: 1024m
-        memswap_limit: 2048m
-        mem_reservation: 512m
+        depends_on:
+            - db
         networks:
             - internal
-        privileged: true
         restart: always
         volumes:
             - ${PROJECT_PATH}:/var/www
             - ./src/app/www.conf:/usr/local/etc/php-fpm.d/www.conf
     nginx:
         build: src/nginx
+        image: omadonex/docker_nginx:1.0
         networks:
             - internal
         ports:
@@ -61,13 +64,14 @@ services:
             - ./temp/nginx/logs:/var/log/nginx
     pma:
         build: src/pma
-        depends_on:
-            - db
+        image: omadonex/docker_pma:1.0
         environment:
             - PMA_ARBITRARY=1
             - MYSQL_USER=${DB_USERNAME}
             - MYSQL_PASSWORD=${DB_PASSWORD}
             - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+        depends_on:
+            - db
         networks:
             - internal
         ports:
