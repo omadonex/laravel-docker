@@ -1,7 +1,7 @@
 version: '2'
 
 networks:
-  default:
+  internal:
     driver: bridge
     ipam:
       driver: default
@@ -12,8 +12,6 @@ networks:
 services:
     db:
         build: src/db
-        volumes:
-            - ./data/mysql:/var/lib/mysql
         environment:
             MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
             MYSQL_DATABASE: ${DB_DATABASE}
@@ -22,6 +20,8 @@ services:
         ports:
             - "${PORT_DB}:3306"
         restart: always
+        volumes:
+            - ./data/mysql:/var/lib/mysql
     app:
         build:
             context: src/app
@@ -31,30 +31,35 @@ services:
                 - VERSION_PHP=${VERSION_PHP}
                 - VERSION_NVM=${VERSION_NVM}
                 - VERSION_NODE=${VERSION_NODE}
+        depends_on:
+            - db
+        environment:
+            PHP_IDE_CONFIG: "serverName=Docker"
+            XDEBUGINI_PATH: "/usr/local/etc/php/conf.d/xdebug.ini"
         mem_limit: 1024m
         memswap_limit: 2048m
         mem_reservation: 512m
+        networks:
+            - internal
         privileged: true
-        volumes:
-            - ${PROJECT_PATH}:/var/www/html
-            - ./src/app/www.conf:/usr/local/etc/php-fpm.d/www.conf
-        depends_on:
-            - db
-        extra_hosts:
-            - "hostmachine: 192.168.50.1"
         restart: always
+        volumes:
+            - ${PROJECT_PATH}:/var/www
+            - ./src/app/www.conf:/usr/local/etc/php-fpm.d/www.conf
     nginx:
         build: src/nginx
         ports:
             - "${PORT_HTTP}:80"
             - "${PORT_HTTPS}:443"
+        restart: always
         volumes_from:
             - app
         volumes:
             - ./temp/nginx/logs:/var/log/nginx
-        restart: always
     pma:
         build: src/pma
+        depends_on:
+            - db
         environment:
             - PMA_ARBITRARY=1
             - MYSQL_USER=${DB_USERNAME}
@@ -62,6 +67,4 @@ services:
             - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
         ports:
             - "${PORT_PMA}:80"
-        depends_on:
-            - db
         restart: always

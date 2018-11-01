@@ -23,13 +23,10 @@ COPY ./php.ini /usr/local/etc/php/conf.d/my-php.ini
 #####################################
 ARG XDEBUG
 ARG VERSION_XDEBUG
-COPY ./xdebug-${VERSION_XDEBUG}.ini /usr/local/etc/php/conf.d/xdebug.ini
+COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 RUN if [ ${XDEBUG} = true ]; then \
     pecl install xdebug-${VERSION_XDEBUG} && \
     docker-php-ext-enable xdebug \
-;fi
-ENV if [ ${XDEBUG} = true ]; then \
-    XDEBUGINI_PATH=/usr/local/etc/php/conf.d/xdebug.ini \
 ;fi
 
 #####################################
