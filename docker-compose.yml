@@ -6,8 +6,8 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: ${SUBNET}/24
-          gateway: ${GATEWAY}
+        - subnet: 192.168.50.0/24
+          gateway: 192.168.50.1
 
 services:
     db:
@@ -41,7 +41,7 @@ services:
         depends_on:
             - db
         extra_hosts:
-            - "hostmachine: ${GATEWAY}"
+            - "hostmachine: 192.168.50.1"
         restart: always
     nginx:
         build: src/nginx
