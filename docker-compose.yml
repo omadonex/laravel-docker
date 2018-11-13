@@ -33,12 +33,13 @@ services:
         build:
             context: src/app
             args:
+                - IMAGICK=${IMAGICK}
                 - XDEBUG=${XDEBUG}
                 - VERSION_XDEBUG=${VERSION_XDEBUG}
                 - VERSION_PHP=${VERSION_PHP}
                 - VERSION_NVM=${VERSION_NVM}
                 - VERSION_NODE=${VERSION_NODE}
-        image: omadonex/laravel_app:1.0
+        image: omadonex/laravel_app:1.1
         environment:
             PHP_IDE_CONFIG: "serverName=Docker"
         depends_on:

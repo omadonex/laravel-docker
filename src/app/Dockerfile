@@ -7,14 +7,18 @@ FROM php:${VERSION_PHP}-fpm
 #####################################
 RUN apt-get update
 RUN apt-get install -y \
+    locales-all \
     unzip \
     zlib1g-dev \
+    libjpeg-dev \
     libpng-dev \
+    libfreetype6-dev \
     gnupg
 
 #####################################
 # PHP settings:
 #####################################
+RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include --with-freetype-dir=/usr/include/
 RUN docker-php-ext-install pdo pdo_mysql zip gd
 COPY ./php.ini /usr/local/etc/php/conf.d/my-php.ini
 
@@ -27,6 +31,16 @@ COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 RUN if [ ${XDEBUG} = true ]; then \
     pecl install xdebug-${VERSION_XDEBUG} && \
     docker-php-ext-enable xdebug \
+;fi
+
+#####################################
+# Imagick:
+#####################################
+ARG IMAGICK
+RUN if [ ${IMAGICK} = true ]; then \
+    apt-get install -y libmagickwand-dev --no-install-recommends && \
+    pecl install imagick && \
+    docker-php-ext-enable imagick \
 ;fi
 
 #####################################
