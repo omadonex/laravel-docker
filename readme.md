@@ -29,6 +29,7 @@ Add to hosts files next line (if you are using docker toolbox you must set here 
 Now you can run containers (docker-compose.yml located inside new folder for submodule)
 
 ```
+    docker-compose pull (to download builded containers)
     docker-compose up 
 ```
 
