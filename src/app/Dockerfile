@@ -7,6 +7,7 @@ FROM php:${VERSION_PHP}-fpm
 #####################################
 RUN apt-get update
 RUN apt-get install -y \
+    git \
     locales-all \
     unzip \
     zlib1g-dev \

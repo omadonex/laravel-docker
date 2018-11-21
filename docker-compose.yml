@@ -39,7 +39,7 @@ services:
                 - VERSION_PHP=${VERSION_PHP}
                 - VERSION_NVM=${VERSION_NVM}
                 - VERSION_NODE=${VERSION_NODE}
-        image: omadonex/laravel_app:1.1
+        image: omadonex/laravel_app:1.2
         environment:
             PHP_IDE_CONFIG: "serverName=Docker"
         depends_on:
