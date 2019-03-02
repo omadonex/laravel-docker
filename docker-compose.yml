@@ -54,7 +54,7 @@ services:
         - VERSION_PHP=${VERSION_PHP}
         - VERSION_NVM=${VERSION_NVM}
         - VERSION_NODE=${VERSION_NODE}
-    image: omadonex/laravel_app:1.0.0
+    image: omadonex/laravel_app:1.0.1
     working_dir: /var/www
     command: >
       bash -l -c "
