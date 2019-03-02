@@ -1,79 +1,88 @@
 version: '2'
 
-networks:
-  internal:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 192.168.50.0/24
-          gateway: 192.168.50.1
-
 services:
-    db:
-        build: src/db
-        image: omadonex/laravel_db:1.0
-        environment:
-            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-            MYSQL_DATABASE: ${DB_DATABASE}
-            MYSQL_USER: ${DB_USERNAME}
-            MYSQL_PASSWORD: ${DB_PASSWORD}
-        networks:
-            - internal
-        ports:
-            - "${PORT_DB}:3306"
-        restart: always
-        volumes:
-            - ./data/mysql:/var/lib/mysql
-    app:
-        mem_limit: 1024m
-        memswap_limit: 2048m
-        mem_reservation: 512m
-        privileged: true
-        build:
-            context: src/app
-            args:
-                - XDEBUG=${XDEBUG}
-                - VERSION_XDEBUG=${VERSION_XDEBUG}
-                - VERSION_PHP=${VERSION_PHP}
-                - VERSION_NVM=${VERSION_NVM}
-                - VERSION_NODE=${VERSION_NODE}
-        image: omadonex/laravel_app:1.0
-        environment:
-            PHP_IDE_CONFIG: "serverName=Docker"
-        depends_on:
-            - db
-        networks:
-            - internal
-        restart: always
-        volumes:
-            - ${PROJECT_PATH}:/var/www
-            - ./src/app/www.conf:/usr/local/etc/php-fpm.d/www.conf
-    nginx:
-        build: src/nginx
-        image: omadonex/laravel_nginx:1.0
-        networks:
-            - internal
-        ports:
-            - "${PORT_HTTP}:80"
-            - "${PORT_HTTPS}:443"
-        restart: always
-        volumes_from:
-            - app
-        volumes:
-            - ./temp/nginx/logs:/var/log/nginx
-    pma:
-        build: src/pma
-        image: omadonex/laravel_pma:1.0
-        environment:
-            - PMA_ARBITRARY=1
-            - MYSQL_USER=${DB_USERNAME}
-            - MYSQL_PASSWORD=${DB_PASSWORD}
-            - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-        depends_on:
-            - db
-        networks:
-            - internal
-        ports:
-            - "${PORT_PMA}:80"
-        restart: always
+  db:
+    container_name: dev_db
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ./configs/mysql.conf:/etc/mysql/conf.d/my.cnf
+      - ./scripts/mysql:/docker-entrypoint-initdb.d
+    restart: always
+
+  redis:
+    container_name: dev_redis
+    image: redis
+    command: ["redis-server"]
+    volumes:
+      - ./data/redis:/data
+      - ./configs/redis.conf:/usr/local/etc/redis/redis.conf
+    restart: always
+
+  pma:
+    container_name: dev_pma
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      - PMA_HOST=db
+    depends_on:
+      - db
+    ports:
+      - "${PORT_PMA}:80"
+    restart: always
+
+  rcm:
+    container_name: dev_rcm
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    depends_on:
+      - redis
+    ports:
+      - "${PORT_RCM}:8081"
+    restart: always
+
+  app:
+    container_name: dev_app
+    build:
+      context: src/app
+      args:
+        - IMAGICK=${IMAGICK}
+        - XDEBUG=${XDEBUG}
+        - VERSION_XDEBUG=${VERSION_XDEBUG}
+        - VERSION_PHP=${VERSION_PHP}
+        - VERSION_NVM=${VERSION_NVM}
+        - VERSION_NODE=${VERSION_NODE}
+    image: omadonex/laravel_app:1.0.0
+    working_dir: /var/www
+    command: >
+      bash -l -c "
+      composer config --global github-oauth.github.com ${GITHUB_TOKEN}
+      && chgrp -R www-data /var/www/storage /var/www/bootstrap/cache
+      && chmod -R ug+rwx /var/www/storage /var/www/bootstrap/cache
+      && php-fpm"
+    environment:
+      PHP_IDE_CONFIG: "serverName=Docker"
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ${PROJECT_PATH}:/var/www
+      - ./www/app/www.conf:/usr/local/etc/php-fpm.d/www.conf
+    restart: always
+
+  nginx:
+    container_name: dev_nginx
+    image: nginx:alpine
+    depends_on:
+      - app
+    volumes_from:
+      - app
+    volumes:
+      - ./configs/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./data/logs/nginx:/var/log/nginx
+    ports:
+      - "${PORT_HTTP}:80"
+      - "${PORT_HTTPS}:443"
+    restart: always

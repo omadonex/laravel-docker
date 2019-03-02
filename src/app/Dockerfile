@@ -7,14 +7,19 @@ FROM php:${VERSION_PHP}-fpm
 #####################################
 RUN apt-get update
 RUN apt-get install -y \
+    git \
+    locales-all \
     unzip \
     zlib1g-dev \
+    libjpeg-dev \
     libpng-dev \
+    libfreetype6-dev \
     gnupg
 
 #####################################
 # PHP settings:
 #####################################
+RUN docker-php-ext-configure gd --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include --with-freetype-dir=/usr/include/
 RUN docker-php-ext-install pdo pdo_mysql zip gd
 COPY ./php.ini /usr/local/etc/php/conf.d/my-php.ini
 
@@ -30,6 +35,16 @@ RUN if [ ${XDEBUG} = true ]; then \
 ;fi
 
 #####################################
+# Imagick:
+#####################################
+ARG IMAGICK
+RUN if [ ${IMAGICK} = true ]; then \
+    apt-get install -y libmagickwand-dev --no-install-recommends && \
+    pecl install imagick && \
+    docker-php-ext-enable imagick \
+;fi
+
+#####################################
 # Node:
 #####################################
 ARG VERSION_NVM
@@ -42,13 +57,3 @@ RUN bash -l -c "nvm install ${VERSION_NODE}"
 #####################################
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && composer --version
-
-#####################################
-# Initialization:
-#####################################
-CMD bash -l -c "\
-    chgrp -R www-data /var/www/storage /var/www/bootstrap/cache \
-    && chmod -R ug+rwx /var/www/storage /var/www/bootstrap/cache \
-    && php-fpm"
-
-WORKDIR /var/www
