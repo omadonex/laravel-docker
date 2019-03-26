@@ -57,3 +57,8 @@ RUN bash -l -c "nvm install ${VERSION_NODE}"
 #####################################
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && composer --version
+
+#####################################
+# Ghostscript:
+#####################################
+RUN apt-get install ghostscript -y
