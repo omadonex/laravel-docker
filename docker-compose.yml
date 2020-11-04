@@ -3,7 +3,8 @@ version: '2'
 services:
   db:
     container_name: dev_db
-    image: mysql:5.7
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
     environment:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
@@ -48,18 +49,15 @@ services:
     build:
       context: src/app
       args:
-        - IMAGICK=${IMAGICK}
-        - XDEBUG=${XDEBUG}
         - VERSION_XDEBUG=${VERSION_XDEBUG}
         - VERSION_PHP=${VERSION_PHP}
         - VERSION_NVM=${VERSION_NVM}
         - VERSION_NODE=${VERSION_NODE}
-    image: omadonex/laravel_app:1.0.2
+    image: omadonex/laravel_app:1.1.0
     working_dir: /var/www
     command: >
       bash -l -c "
-      composer config --global github-oauth.github.com ${GITHUB_TOKEN}
-      && chgrp -R www-data /var/www/storage /var/www/bootstrap/cache
+      chgrp -R www-data /var/www/storage /var/www/bootstrap/cache
       && chmod -R ug+rwx /var/www/storage /var/www/bootstrap/cache
       && php-fpm"
     environment:
