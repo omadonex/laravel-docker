@@ -56,10 +56,7 @@ services:
     image: omadonex/laravel_app:1.1.0
     working_dir: /var/www
     command: >
-      bash -l -c "
-      chgrp -R www-data /var/www/storage /var/www/bootstrap/cache
-      && chmod -R ug+rwx /var/www/storage /var/www/bootstrap/cache
-      && php-fpm"
+      bash -l -c "php-fpm"
     environment:
       PHP_IDE_CONFIG: "serverName=Docker"
     depends_on:
