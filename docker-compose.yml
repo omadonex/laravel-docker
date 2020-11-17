@@ -54,11 +54,11 @@ services:
         - VERSION_NVM=${VERSION_NVM}
         - VERSION_NODE=${VERSION_NODE}
     image: omadonex/laravel_app:1.1.0
-    working_dir: /var/www
+    working_dir: /var/www/app
     command: >
       bash -l -c "
-      chgrp -R www-data /var/www/storage /var/www/bootstrap/cache
-      && chmod -R ug+rwx /var/www/storage /var/www/bootstrap/cache
+      chgrp -R www-data /var/www/app/storage /var/www/app/bootstrap/cache
+      && chmod -R ug+rwx /var/www/app/storage /var/www/app/bootstrap/cache
       && php-fpm"
     environment:
       PHP_IDE_CONFIG: "serverName=Docker"
@@ -66,7 +66,8 @@ services:
       - db
       - redis
     volumes:
-      - ${PROJECT_PATH}:/var/www
+      - ${PROJECT_PATH}:/var/www/app
+      - ${LIB_PATH}:/var/www/lib
       - ./www/app/www.conf:/usr/local/etc/php-fpm.d/www.conf
     restart: always
 
