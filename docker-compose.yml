@@ -26,6 +26,7 @@ services:
     image: phpmyadmin/phpmyadmin:latest
     environment:
       - PMA_HOST=db
+      - UPLOAD_LIMIT=512M
     depends_on:
       - db
     ports:
