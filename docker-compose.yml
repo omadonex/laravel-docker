@@ -10,6 +10,8 @@ services:
       - ./data/mysql:/var/lib/mysql
       - ./configs/mysql.conf:/etc/mysql/conf.d/my.cnf
       - ./scripts/mysql:/docker-entrypoint-initdb.d
+    ports:
+      - "${PORT_DB}:3306"
     restart: always
 
   redis:
