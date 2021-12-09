@@ -23,14 +23,11 @@ RUN apt-get install -y \
 #####################################
 # PHP settings:
 #####################################
-ARG VERSION_XDEBUG
-
-COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 COPY ./php.ini /usr/local/etc/php/conf.d/my-php.ini
 
 RUN docker-php-ext-install pdo pdo_mysql zip gd
-RUN pecl install xdebug-${VERSION_XDEBUG} imagick
-RUN docker-php-ext-enable xdebug imagick
+RUN pecl install imagick
+RUN docker-php-ext-enable imagick
 
 #####################################
 # Composer:

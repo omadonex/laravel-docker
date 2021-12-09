@@ -51,19 +51,16 @@ services:
     build:
       context: src/app
       args:
-        - VERSION_XDEBUG=${VERSION_XDEBUG}
         - VERSION_PHP=${VERSION_PHP}
         - VERSION_NVM=${VERSION_NVM}
         - VERSION_NODE=${VERSION_NODE}
-    image: omadonex/laravel_app:1.4
+    image: omadonex/laravel_app:1.5
     working_dir: /var/www/app
     command: >
       bash -l -c "
       chgrp -R www-data /var/www/app/storage /var/www/app/bootstrap/cache
       && chmod -R ug+rwx /var/www/app/storage /var/www/app/bootstrap/cache
       && php-fpm"
-    environment:
-      PHP_IDE_CONFIG: "serverName=Docker"
     depends_on:
       - db
       - redis
