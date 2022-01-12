@@ -16,6 +16,7 @@ RUN apt-get install -y \
     libpng-dev \
     libzip-dev \
     locales-all \
+    python2 \
     unzip \
     zip \
     zlib1g-dev
