@@ -25,7 +25,7 @@ services:
 
   pma:
     container_name: dev_pma
-    image: phpmyadmin/phpmyadmin:latest
+    image: phpmyadmin
     environment:
       - PMA_HOST=db
       - UPLOAD_LIMIT=512M
