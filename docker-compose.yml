@@ -25,10 +25,12 @@ services:
 
   pma:
     container_name: dev_pma
-    image: phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
     environment:
       - PMA_HOST=db
       - UPLOAD_LIMIT=512M
+    volumes:
+      - ./configs/pma.inc.php:/etc/phpmyadmin/config.user.inc.php
     depends_on:
       - db
     ports:
