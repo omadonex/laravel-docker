@@ -26,6 +26,7 @@ RUN apt-get install -y \
 COPY ./php.ini /usr/local/etc/php/conf.d/my-php.ini
 
 RUN docker-php-ext-install pdo pdo_mysql zip gd bcmath
+RUN docker-php-ext-configure gd --enable-gd --with-jpeg --with-webp --with-freetype
 RUN pecl install imagick
 RUN docker-php-ext-enable imagick
 
