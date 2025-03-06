@@ -37,6 +37,11 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     && composer --version
 
 #####################################
+# Laravel:
+#####################################
+RUN composer global require laravel/installer
+
+#####################################
 # Node:
 #####################################
 ARG VERSION_NVM
